@@ -142,15 +142,14 @@ var Ball = /*#__PURE__*/function () {
     _classCallCheck(this, Ball);
 
     this.x = x;
-    this.y = y; //this.dy = dy
-    //this.dx = dx
-
+    this.y = y;
     this.velocity = {
       x: dx,
       y: dy
     };
     this.radius = radius;
     this.color = color;
+    this.mass = 1;
   }
 
   _createClass(Ball, [{
@@ -165,7 +164,7 @@ var Ball = /*#__PURE__*/function () {
     }
   }, {
     key: "update",
-    value: function update() {
+    value: function update(ballArray) {
       if (this.y + this.radius + this.velocity.y > canvas.height) {
         this.velocity.y = -this.velocity.y * friction;
         this.velocity.x = this.velocity.x * friction;
@@ -173,7 +172,7 @@ var Ball = /*#__PURE__*/function () {
         this.velocity.y += gravity;
       }
 
-      if (this.x + this.radius + this.velocity.x > canvas.width || this.x - this.radius <= 0) {
+      if (this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
         this.velocity.x = -this.velocity.x;
       }
 
@@ -200,8 +199,7 @@ function init() {
     var dy = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(-2, 2);
     var color = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomColor"])(colors);
     ballArray.push(new Ball(x, y, dx, dy, radius, color));
-  } //ball = new Ball(canvas.width / 2, canvas.height / 2, 2, 30, 'red');
-
+  }
 
   console.log(ballArray);
 } // Animation Loop
@@ -210,9 +208,6 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
-  /*   for (let i = 0; i < ballArray.length; i++) {
-      ballArray[i].update()
-    } */
 
   var _iterator = _createForOfIteratorHelper(ballArray),
       _step;
@@ -221,12 +216,7 @@ function animate() {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var ball = _step.value;
       ball.update();
-    } //c.fillText('HTML CANVAS BOILERPLATE', mouse.x, mouse.y)
-    // objects.forEach(object => {
-    //  object.update()
-    // })
-    //ball.update()
-
+    }
   } catch (err) {
     _iterator.e(err);
   } finally {
