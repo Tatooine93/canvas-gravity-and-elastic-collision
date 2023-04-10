@@ -1,4 +1,4 @@
-import utils, { distance, randomColor, randomIntFromRange } from './utils'
+import utils, { randomIntFromRange, randomColor, distance, rotate, resolveCollision } from './utils'
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
@@ -59,7 +59,14 @@ class Ball {
   }
 
   update(ballArray) {
-    
+
+    for (let ball of ballArray) {
+      if (this === ball) continue;
+      if (distance(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
+        resolveCollision(this, ball)
+      }
+    }
+
     if (this.y + this.radius + this.velocity.y > canvas.height) {
       this.velocity.y = -this.velocity.y * friction
 
@@ -84,7 +91,7 @@ class Ball {
 let ballArray;
 
 function init() {
-  
+
   ballArray = [];
 
   for (let i = 0; i < ballsNumber; i++) {
@@ -94,6 +101,15 @@ function init() {
       let dx = randomIntFromRange(-2, 2);
       let dy = randomIntFromRange(-2, 2);
       let color = randomColor(colors)
+      if(i !== 0){
+        for (let j = 0;  j < ballArray.length; j++){
+          if (distance(x, y, ballArray[j].x, ballArray[j].y) - radius * 2 < 0){
+            x = randomIntFromRange(radius, canvas.width - radius);
+            y = randomIntFromRange(radius, canvas.height - radius);
+            j = -1;
+          }
+        }
+      }
       ballArray.push(new Ball(x, y, dx, dy, radius, color));
     }
 
@@ -108,7 +124,7 @@ function animate() {
   c.clearRect(0, 0, canvas.width, canvas.height)
 
   for (const ball of ballArray) {
-    ball.update()
+    ball.update(ballArray)
   }
 }
 
