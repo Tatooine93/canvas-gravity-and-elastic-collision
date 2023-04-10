@@ -18,7 +18,7 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']
 //settings
 let gravity = 0.2;
 let friction = 0.96;
-let ballsNumber = 100;
+let ballsNumber = 50;
 let minRadius = 4;
 let maxRadius = 20;
 
@@ -78,6 +78,13 @@ class Ball {
 
     if(this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
       this.velocity.x = -this.velocity.x;
+    }
+
+    if(this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
+      document.body.style.backgroundColor = 'red'
+    }
+    else {
+      document.body.style.backgroundColor = 'white'
     }
 
     this.x += this.velocity.x;

@@ -123,7 +123,7 @@ var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']; //settings
 
 var gravity = 0.2;
 var friction = 0.96;
-var ballsNumber = 100;
+var ballsNumber = 50;
 var minRadius = 4;
 var maxRadius = 20; // Event Listeners
 
@@ -192,6 +192,12 @@ var Ball = /*#__PURE__*/function () {
 
       if (this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
         this.velocity.x = -this.velocity.x;
+      }
+
+      if (this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
+        document.body.style.backgroundColor = 'red';
+      } else {
+        document.body.style.backgroundColor = 'white';
       }
 
       this.x += this.velocity.x;
