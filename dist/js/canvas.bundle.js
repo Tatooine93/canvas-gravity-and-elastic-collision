@@ -142,9 +142,13 @@ var Ball = /*#__PURE__*/function () {
     _classCallCheck(this, Ball);
 
     this.x = x;
-    this.y = y;
-    this.dy = dy;
-    this.dx = dx;
+    this.y = y; //this.dy = dy
+    //this.dx = dx
+
+    this.velocity = {
+      x: dx,
+      y: dy
+    };
     this.radius = radius;
     this.color = color;
   }
@@ -162,19 +166,19 @@ var Ball = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update() {
-      if (this.y + this.radius + this.dy > canvas.height) {
-        this.dy = -this.dy * friction;
-        this.dx = this.dx * friction;
+      if (this.y + this.radius + this.velocity.y > canvas.height) {
+        this.velocity.y = -this.velocity.y * friction;
+        this.velocity.x = this.velocity.x * friction;
       } else {
-        this.dy += gravity;
+        this.velocity.y += gravity;
       }
 
-      if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius <= 0) {
-        this.dx = -this.dx;
+      if (this.x + this.radius + this.velocity.x > canvas.width || this.x - this.radius <= 0) {
+        this.velocity.x = -this.velocity.x;
       }
 
-      this.x += this.dx;
-      this.y += this.dy;
+      this.x += this.velocity.x;
+      this.y += this.velocity.y;
       this.draw();
     }
   }]);
