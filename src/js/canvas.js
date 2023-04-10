@@ -40,14 +40,13 @@ class Ball {
   constructor(x, y, dx, dy, radius, color) {
     this.x = x
     this.y = y
-    //this.dy = dy
-    //this.dx = dx
     this.velocity = {
       x: dx,
       y: dy,
     }
     this.radius = radius
     this.color = color
+    this.mass = 1
   }
 
   draw() {
@@ -59,23 +58,25 @@ class Ball {
     c.closePath()
   }
 
-  update() {
+  update(ballArray) {
+    
     if (this.y + this.radius + this.velocity.y > canvas.height) {
       this.velocity.y = -this.velocity.y * friction
+
       this.velocity.x = this.velocity.x * friction
     }
     else {
       this.velocity.y += gravity;
     }
 
-    if(this.x + this.radius + this.velocity.x > canvas.width || this.x - this.radius <= 0) {
+    if(this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
       this.velocity.x = -this.velocity.x;
     }
 
-
     this.x += this.velocity.x;
     this.y += this.velocity.y;
-    this.draw()
+
+    this.draw();
   }
 }
 
@@ -83,7 +84,9 @@ class Ball {
 let ballArray;
 
 function init() {
+  
   ballArray = [];
+
   for (let i = 0; i < ballsNumber; i++) {
       let radius = randomIntFromRange(minRadius, maxRadius);
       let x = randomIntFromRange(radius, canvas.width - radius);
@@ -93,7 +96,7 @@ function init() {
       let color = randomColor(colors)
       ballArray.push(new Ball(x, y, dx, dy, radius, color));
     }
-  //ball = new Ball(canvas.width / 2, canvas.height / 2, 2, 30, 'red');
+
   console.log(ballArray);
 
 }
@@ -103,20 +106,10 @@ function animate() {
   requestAnimationFrame(animate)
 
   c.clearRect(0, 0, canvas.width, canvas.height)
-  
-/*   for (let i = 0; i < ballArray.length; i++) {
-    ballArray[i].update()
-  } */
 
   for (const ball of ballArray) {
     ball.update()
   }
-
-  //c.fillText('HTML CANVAS BOILERPLATE', mouse.x, mouse.y)
-  // objects.forEach(object => {
-  //  object.update()
-  // })
-  //ball.update()
 }
 
 init()
