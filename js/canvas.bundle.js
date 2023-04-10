@@ -165,6 +165,24 @@ var Ball = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(ballArray) {
+      var _iterator = _createForOfIteratorHelper(ballArray),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var ball = _step.value;
+          if (this === ball) continue;
+
+          if (Object(_utils__WEBPACK_IMPORTED_MODULE_0__["distance"])(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
+            Object(_utils__WEBPACK_IMPORTED_MODULE_0__["resolveCollision"])(this, ball);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
       if (this.y + this.radius + this.velocity.y > canvas.height) {
         this.velocity.y = -this.velocity.y * friction;
         this.velocity.x = this.velocity.x * friction;
@@ -198,6 +216,17 @@ function init() {
     var dx = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(-2, 2);
     var dy = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(-2, 2);
     var color = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomColor"])(colors);
+
+    if (i !== 0) {
+      for (var j = 0; j < ballArray.length; j++) {
+        if (Object(_utils__WEBPACK_IMPORTED_MODULE_0__["distance"])(x, y, ballArray[j].x, ballArray[j].y) - radius * 2 < 0) {
+          x = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(radius, canvas.width - radius);
+          y = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(radius, canvas.height - radius);
+          j = -1;
+        }
+      }
+    }
+
     ballArray.push(new Ball(x, y, dx, dy, radius, color));
   }
 
@@ -209,18 +238,18 @@ function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  var _iterator = _createForOfIteratorHelper(ballArray),
-      _step;
+  var _iterator2 = _createForOfIteratorHelper(ballArray),
+      _step2;
 
   try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var ball = _step.value;
-      ball.update();
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var ball = _step2.value;
+      ball.update(ballArray);
     }
   } catch (err) {
-    _iterator.e(err);
+    _iterator2.e(err);
   } finally {
-    _iterator.f();
+    _iterator2.f();
   }
 }
 
@@ -250,10 +279,55 @@ function distance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
 }
 
+function rotate(velocity, angle) {
+  var rotatedVelocities = {
+    x: velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),
+    y: velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle)
+  };
+  return rotatedVelocities;
+}
+
+function resolveCollision(particle, otherParticle) {
+  var xVelocityDiff = particle.velocity.x - otherParticle.velocity.x;
+  var yVelocityDiff = particle.velocity.y - otherParticle.velocity.y;
+  var xDist = otherParticle.x - particle.x;
+  var yDist = otherParticle.y - particle.y; // Prevent accidental overlap of particles
+
+  if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
+    // Grab angle between the two colliding particles
+    var angle = -Math.atan2(otherParticle.y - particle.y, otherParticle.x - particle.x); // Store mass in var for better readability in collision equation
+
+    var m1 = particle.mass;
+    var m2 = otherParticle.mass; // Velocity before equation
+
+    var u1 = rotate(particle.velocity, angle);
+    var u2 = rotate(otherParticle.velocity, angle); // Velocity after 1d collision equation
+
+    var v1 = {
+      x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2),
+      y: u1.y
+    };
+    var v2 = {
+      x: u2.x * (m1 - m2) / (m1 + m2) + u1.x * 2 * m2 / (m1 + m2),
+      y: u2.y
+    }; // Final velocity after rotating axis back to original location
+
+    var vFinal1 = rotate(v1, -angle);
+    var vFinal2 = rotate(v2, -angle); // Swap particle velocities for realistic bounce effect
+
+    particle.velocity.x = vFinal1.x;
+    particle.velocity.y = vFinal1.y;
+    otherParticle.velocity.x = vFinal2.x;
+    otherParticle.velocity.y = vFinal2.y;
+  }
+}
+
 module.exports = {
   randomIntFromRange: randomIntFromRange,
   randomColor: randomColor,
-  distance: distance
+  distance: distance,
+  rotate: rotate,
+  resolveCollision: resolveCollision
 };
 
 /***/ })
