@@ -18,7 +18,8 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']
 //settings
 let gravity = 0.2;
 let friction = 0.96;
-let ballsNumber = 50;
+let airFriction = 0.9999;
+let ballsNumber = 10;
 let minRadius = 4;
 let maxRadius = 20;
 
@@ -60,14 +61,14 @@ class Ball {
 
   update(ballArray) {
 
-    for (let ball of ballArray) {
+ /*    for (let ball of ballArray) {
       if (this === ball) continue;
       if (distance(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
         resolveCollision(this, ball)
       }
-    }
+    } */
 
-    if (this.y + this.radius + this.velocity.y > canvas.height) {
+    if (this.y + this.radius + this.velocity.y > canvas.height || this.y + this.radius <=0) {
       this.velocity.y = -this.velocity.y * friction
 
       this.velocity.x = this.velocity.x * friction
@@ -79,14 +80,17 @@ class Ball {
     if(this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
       this.velocity.x = -this.velocity.x;
     }
+    else {
+      this.velocity.x = this.velocity.x * airFriction
+    }
 
-    if(this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
+    /* if(this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
       document.body.style.backgroundColor = 'red'
     }
     else {
       document.body.style.backgroundColor = 'white'
     }
-
+ */
     this.x += this.velocity.x;
     this.y += this.velocity.y;
 
