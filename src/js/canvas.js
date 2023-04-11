@@ -18,8 +18,8 @@ const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']
 //settings
 let gravity = 0.2;
 let friction = 0.96;
-let airFriction = 0.9999;
-let ballsNumber = 10;
+let airFriction = 0.99999;
+let ballsNumber = 80;
 let minRadius = 4;
 let maxRadius = 20;
 
@@ -38,7 +38,7 @@ addEventListener('resize', () => {
 
 // Objects
 class Ball {
-  constructor(x, y, dx, dy, radius, color) {
+  constructor(x, y, dx, dy, radius, color, mass) {
     this.x = x
     this.y = y
     this.velocity = {
@@ -47,7 +47,7 @@ class Ball {
     }
     this.radius = radius
     this.color = color
-    this.mass = 1
+    this.mass = mass
   }
 
   draw() {
@@ -61,12 +61,12 @@ class Ball {
 
   update(ballArray) {
 
- /*    for (let ball of ballArray) {
+    for (let ball of ballArray) {
       if (this === ball) continue;
       if (distance(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
         resolveCollision(this, ball)
       }
-    } */
+    }
 
     if (this.y + this.radius + this.velocity.y > canvas.height || this.y + this.radius <=0) {
       this.velocity.y = -this.velocity.y * friction
@@ -111,7 +111,9 @@ function init() {
       let y = randomIntFromRange(0, canvas.height - radius);
       let dx = randomIntFromRange(-2, 2);
       let dy = randomIntFromRange(-2, 2);
-      let color = randomColor(colors)
+      let color = randomColor(colors);
+      let mass = 1;
+      
       if(i !== 0){
         for (let j = 0;  j < ballArray.length; j++){
           if (distance(x, y, ballArray[j].x, ballArray[j].y) - radius * 2 < 0){
@@ -121,7 +123,7 @@ function init() {
           }
         }
       }
-      ballArray.push(new Ball(x, y, dx, dy, radius, color));
+      ballArray.push(new Ball(x, y, dx, dy, radius, color, mass));
     }
 
   console.log(ballArray);
