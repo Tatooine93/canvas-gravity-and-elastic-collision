@@ -123,8 +123,8 @@ var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']; //settings
 
 var gravity = 0.2;
 var friction = 0.96;
-var airFriction = 0.9999;
-var ballsNumber = 10;
+var airFriction = 0.99999;
+var ballsNumber = 80;
 var minRadius = 4;
 var maxRadius = 20; // Event Listeners
 
@@ -139,7 +139,7 @@ addEventListener('resize', function () {
 }); // Objects
 
 var Ball = /*#__PURE__*/function () {
-  function Ball(x, y, dx, dy, radius, color) {
+  function Ball(x, y, dx, dy, radius, color, mass) {
     _classCallCheck(this, Ball);
 
     this.x = x;
@@ -150,7 +150,7 @@ var Ball = /*#__PURE__*/function () {
     };
     this.radius = radius;
     this.color = color;
-    this.mass = 1;
+    this.mass = mass;
   }
 
   _createClass(Ball, [{
@@ -166,12 +166,24 @@ var Ball = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(ballArray) {
-      /*    for (let ball of ballArray) {
-           if (this === ball) continue;
-           if (distance(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
-             resolveCollision(this, ball)
-           }
-         } */
+      var _iterator = _createForOfIteratorHelper(ballArray),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var ball = _step.value;
+          if (this === ball) continue;
+
+          if (Object(_utils__WEBPACK_IMPORTED_MODULE_0__["distance"])(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
+            Object(_utils__WEBPACK_IMPORTED_MODULE_0__["resolveCollision"])(this, ball);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
       if (this.y + this.radius + this.velocity.y > canvas.height || this.y + this.radius <= 0) {
         this.velocity.y = -this.velocity.y * friction;
         this.velocity.x = this.velocity.x * friction;
@@ -215,6 +227,7 @@ function init() {
     var dx = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(-2, 2);
     var dy = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomIntFromRange"])(-2, 2);
     var color = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["randomColor"])(colors);
+    var mass = 1;
 
     if (i !== 0) {
       for (var j = 0; j < ballArray.length; j++) {
@@ -226,7 +239,7 @@ function init() {
       }
     }
 
-    ballArray.push(new Ball(x, y, dx, dy, radius, color));
+    ballArray.push(new Ball(x, y, dx, dy, radius, color, mass));
   }
 
   console.log(ballArray);
@@ -237,18 +250,18 @@ function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  var _iterator = _createForOfIteratorHelper(ballArray),
-      _step;
+  var _iterator2 = _createForOfIteratorHelper(ballArray),
+      _step2;
 
   try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var ball = _step.value;
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var ball = _step2.value;
       ball.update(ballArray);
     }
   } catch (err) {
-    _iterator.e(err);
+    _iterator2.e(err);
   } finally {
-    _iterator.f();
+    _iterator2.f();
   }
 }
 
