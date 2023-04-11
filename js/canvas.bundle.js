@@ -123,7 +123,8 @@ var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66']; //settings
 
 var gravity = 0.2;
 var friction = 0.96;
-var ballsNumber = 50;
+var airFriction = 0.9999;
+var ballsNumber = 10;
 var minRadius = 4;
 var maxRadius = 20; // Event Listeners
 
@@ -165,25 +166,13 @@ var Ball = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(ballArray) {
-      var _iterator = _createForOfIteratorHelper(ballArray),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var ball = _step.value;
-          if (this === ball) continue;
-
-          if (Object(_utils__WEBPACK_IMPORTED_MODULE_0__["distance"])(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
-            Object(_utils__WEBPACK_IMPORTED_MODULE_0__["resolveCollision"])(this, ball);
-          }
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-
-      if (this.y + this.radius + this.velocity.y > canvas.height) {
+      /*    for (let ball of ballArray) {
+           if (this === ball) continue;
+           if (distance(this.x, this.y, ball.x, ball.y) - this.radius * 2 < 0) {
+             resolveCollision(this, ball)
+           }
+         } */
+      if (this.y + this.radius + this.velocity.y > canvas.height || this.y + this.radius <= 0) {
         this.velocity.y = -this.velocity.y * friction;
         this.velocity.x = this.velocity.x * friction;
       } else {
@@ -192,13 +181,17 @@ var Ball = /*#__PURE__*/function () {
 
       if (this.x + this.radius > canvas.width || this.x - this.radius <= 0) {
         this.velocity.x = -this.velocity.x;
-      }
-
-      if (this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
-        document.body.style.backgroundColor = 'red';
       } else {
-        document.body.style.backgroundColor = 'white';
+        this.velocity.x = this.velocity.x * airFriction;
       }
+      /* if(this.y > canvas.height || this.y <= 0 || this.x > canvas.width || this.x <= 0) {
+        document.body.style.backgroundColor = 'red'
+      }
+      else {
+        document.body.style.backgroundColor = 'white'
+      }
+      */
+
 
       this.x += this.velocity.x;
       this.y += this.velocity.y;
@@ -244,18 +237,18 @@ function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  var _iterator2 = _createForOfIteratorHelper(ballArray),
-      _step2;
+  var _iterator = _createForOfIteratorHelper(ballArray),
+      _step;
 
   try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var ball = _step2.value;
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var ball = _step.value;
       ball.update(ballArray);
     }
   } catch (err) {
-    _iterator2.e(err);
+    _iterator.e(err);
   } finally {
-    _iterator2.f();
+    _iterator.f();
   }
 }
 
